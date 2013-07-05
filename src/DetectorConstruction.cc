@@ -11,18 +11,22 @@
 
 #include "G4RunManager.hh"
 #include "G4SDManager.hh"
+#include "globals.hh"
 
 #include "DetectorConstruction.hh"
 #include "SensitiveDetector.hh"
 
+#include "G4VSolid.hh"
 #include "G4LogicalVolume.hh"
+#include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
-#include "G4VisAttributes.h"
+#include "G4VisAttributes.hh"
 #include "G4NistManager.hh"
+#include "G4Material.hh"
 
-#include "G4Box.h"
+#include "G4Box.hh"
 
-#include "G4ThreeVector.h"
+#include "G4ThreeVector.hh"
 
 /*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
 
@@ -44,6 +48,8 @@ DetectorConstruction::~DetectorConstruction()
 
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
+
+  DefineMaterials();
   
   World_sol = new G4Box("World",worldSize/2,worldSize/2,worldSize/2);   
   World_log = new G4LogicalVolume(World_sol,Air,"World");		
@@ -58,7 +64,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 #define GET_MATERIAL G4NistManager::Instance()->FindOrBuildMaterial
 
-void Detector::DefineMaterials(){
+void DetectorConstruction::DefineMaterials(){
   Air = GET_MATERIAL("G4_AIR");
 }
 

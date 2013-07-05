@@ -30,7 +30,6 @@
 
 int main(int argc,char** argv) {
 
-  Messenger* msgr = new Messenger();
   G4UImanager* UI = G4UImanager::GetUIpointer();  
 
   CLHEP::HepRandom::setTheEngine(new CLHEP::RanecuEngine);

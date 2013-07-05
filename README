@@ -1,0 +1,43 @@
+===============================================================================
+[                              DTU-SPACE-GEANT                                ]
+===============================================================================
+
+Programmer     : Yigit Dallilar
+Start          : -
+Project Info   : -
+
+Files          :
+----------------
+
++ ./
+  - dtu-space-geant.cc
+  - GNUMakefile
+  - README
+  + ./src/
+    - DetectorConstruction.cc
+    - PhysicsList.cc
+    - PrimaryGeneratorAction.cc
+    - Run.cc
+    - RunAction.cc
+    - SensitiveDetector.cc
+    - TrackHit.cc
+  + ./include/
+    - DetectorConstruction.hh
+    - PhysicsList.hh
+    - PrimaryGeneratorAction.hh
+    - Run.hh
+    - RunAction.hh
+    - SensitiveDetector.hh
+    - TrackHit.hh
+
+Log             :
+-----------------
+
+-04.07.2013
+ Repository is formed in Github.
+ Access for orsted.
+
+-05.07.2013
+ Working on the template for the simulation...
+
+===============================================================================
