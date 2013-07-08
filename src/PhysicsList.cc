@@ -162,9 +162,9 @@ void PhysicsList::RadioactiveDecay()
 void PhysicsList::SetCuts()
 {
   SetCutsWithDefault();
-  SetCutValue(0.001*mm, "gamma");
-  SetCutValue(0.001*mm, "e-");
-  SetCutValue(0.001*mm, "e+");
+  //SetCutValue(0.001*mm, "gamma");
+  //SetCutValue(0.001*mm, "e-");
+  //SetCutValue(0.001*mm, "e+");
 }
 
 /*****************************************************************************/
