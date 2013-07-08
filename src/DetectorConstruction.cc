@@ -69,24 +69,50 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 }
 
+/*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
+
 void DetectorConstruction::BuildDetector(){
 
-  G4int n_det = 10;
+  G4int n_det = 100;
   G4double det_ins_width = 0.35*0.5*mm;
-  G4double det_ins_blank = 0.1*mm;
+  G4double det_ins_blank = 0.*mm;
   G4double det_ins_radius = 2.5*cm;
+
   G4double det_ins_rep_width = det_ins_width*2+det_ins_blank;
   G4double det_ins_cont_width = n_det*det_ins_rep_width*0.5;
-  G4double det_ins_cont_off = -det_ins_cont_width;
+  //G4double det_ins_cont_off = -det_ins_cont_width;
+  G4ThreeVector det_ins_pos = G4ThreeVector(0,0,-det_ins_cont_width);
 
   G4VSolid* det_ins_cont_sol = new G4Tubs("det_ins_cont_sol",0,det_ins_radius,det_ins_cont_width,0,2*pi*radian);
   G4LogicalVolume *det_ins_cont_log = new G4LogicalVolume(det_ins_cont_sol,Air,"det_ins_cont_log");
-  G4VPhysicalVolume* det_ins_cont_phys = new G4PVPlacement(0,G4ThreeVector(0,0,det_ins_cont_off),det_ins_cont_log,"det_ins_cont_phys",World_log,0,0,false);
+  G4VPhysicalVolume* det_ins_cont_phys = new G4PVPlacement(0,det_ins_pos,det_ins_cont_log,"det_ins_cont_phys",World_log,0,0,false);
   det_ins_cont_log->SetVisAttributes(G4VisAttributes::Invisible);
   G4VSolid* det_ins_sol = new G4Tubs("det_ins_sol",0,det_ins_radius,det_ins_width,0,2*pi);
   G4LogicalVolume* det_ins_log = new G4LogicalVolume(det_ins_sol,CdZnTe,"det_ins_log");  
   G4VPhysicalVolume* det_ins_phys = new G4PVReplica("det_ins_phys",det_ins_log,det_ins_cont_phys,kZAxis,n_det,det_ins_rep_width,0);
   det_ins_log->SetVisAttributes(G4Color::Yellow());
+
+  G4double det_out_radius_diff = 1.5*cm;
+  G4double det_out_thick = 1.*cm;
+  G4double det_out_outer_radius = det_ins_radius+det_out_radius_diff;
+  G4double det_out_inner_radius = det_ins_radius+det_out_radius_diff-det_out_thick;
+  G4double det_out_width_diff = 0.5*mm;
+  G4double det_out_width = det_ins_cont_width + det_out_width_diff;
+  G4ThreeVector det_out_pos = G4ThreeVector(0,0,-det_out_width);
+
+  G4VSolid* det_out_sol = new G4Tubs("det_out_sol",det_out_inner_radius,det_out_outer_radius,det_out_width,0,2*pi*radian);
+  G4LogicalVolume* det_out_log = new G4LogicalVolume(det_out_sol,CdZnTe,"det_out_log");
+  G4VPhysicalVolume* det_out_phys = new G4PVPlacement(0,det_out_pos,det_out_log,"det_out_phys",World_log,0,0,false);
+  det_out_log->SetVisAttributes(G4Color::Magenta());
+
+  G4double det_bot_radius = det_out_outer_radius;
+  G4double det_bot_width = 0.5*cm;
+  G4ThreeVector det_bot_pos = G4ThreeVector(0,0,-det_out_width*2-det_bot_width);
+  
+  G4VSolid* det_bot_sol = new G4Tubs("det_bot_sol",0,det_bot_radius,det_bot_width,0,2*pi*radian);
+  G4LogicalVolume* det_bot_log = new G4LogicalVolume(det_bot_sol,CdZnTe,"det_out_log");
+  G4VPhysicalVolume* det_bot_phys = new G4PVPlacement(0,det_bot_pos,det_bot_log,"det_bot_phys",World_log,0,0,false);
+  det_bot_log->SetVisAttributes(G4Color::Blue());
 
 }
 
