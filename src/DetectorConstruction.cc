@@ -62,9 +62,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   World_log->SetVisAttributes(G4VisAttributes::Invisible);
 
   BuildDetector();
-      
-  sensDet = new SensitiveDetector("/SensDetector");
-     
+           
   return World_phys;
 
 }
@@ -80,7 +78,6 @@ void DetectorConstruction::BuildDetector(){
 
   G4double det_ins_rep_width = det_ins_width*2+det_ins_blank;
   G4double det_ins_cont_width = n_det*det_ins_rep_width*0.5;
-  //G4double det_ins_cont_off = -det_ins_cont_width;
   G4ThreeVector det_ins_pos = G4ThreeVector(0,0,-det_ins_cont_width);
 
   G4VSolid* det_ins_cont_sol = new G4Tubs("det_ins_cont_sol",0,det_ins_radius,det_ins_cont_width,0,2*pi*radian);
@@ -112,9 +109,21 @@ void DetectorConstruction::BuildDetector(){
   G4VSolid* det_bot_sol = new G4Tubs("det_bot_sol",0,det_bot_radius,det_bot_width,0,2*pi*radian);
   G4LogicalVolume* det_bot_log = new G4LogicalVolume(det_bot_sol,CdZnTe,"det_out_log");
   G4VPhysicalVolume* det_bot_phys = new G4PVPlacement(0,det_bot_pos,det_bot_log,"det_bot_phys",World_log,0,0,false);
-  det_bot_log->SetVisAttributes(G4Color::Blue());
+  det_bot_log->SetVisAttributes(G4Color::Magenta());
+
+  SensitiveDetector *sens_det_ins = new SensitiveDetector("/det/ins");
+  SensitiveDetector *sens_det_out = new SensitiveDetector("/det/out");
+  det_ins_log->SetSensitiveDetector(sens_det_ins);
+  det_out_log->SetSensitiveDetector(sens_det_out);
+  det_bot_log->SetSensitiveDetector(sens_det_out);
+
+  G4SDManager *SDMan = G4SDManager::GetSDMpointer();
+  SDMan->AddNewDetector(sens_det_ins);
+  SDMan->AddNewDetector(sens_det_out);
 
 }
+
+/*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
 
 #define GET_MATERIAL G4NistManager::Instance()->FindOrBuildMaterial
 

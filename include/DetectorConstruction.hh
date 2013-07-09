@@ -34,15 +34,13 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   void BuildDetector();
 
   G4double worldSize;    
-		
+
   G4Material* Air; 
   G4Material* CdZnTe;
   
   G4VSolid* World_sol;  
   G4LogicalVolume* World_log;  
   G4VPhysicalVolume* World_phys;  
-
-  SensitiveDetector* sensDet;
 
 };
 

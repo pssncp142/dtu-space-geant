@@ -26,7 +26,7 @@ using namespace std;
 
 Run::Run(const vector<G4String> SDName)
 {
-
+  numberOfEvent=0;
 }
 
 /*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
@@ -40,54 +40,52 @@ Run::~Run()
 
 void Run::RecordEvent(const G4Event* aEvent)
 {
-
   G4HCofThisEvent* HCE;
-  G4SDManager* fSDM;
-  G4int collectionID,percent,NbHits;
+  TrackHitCollection* HC;  
+  G4int NbHits;
+
+  Timing();
+
+  HCE = aEvent->GetHCofThisEvent();
+  if (!HCE) return;
+  //G4cout<<G4endl;
+  for(int i=0; i<2; i++){
+    HC = (TrackHitCollection*)(HCE->GetHC(i));  
+    NbHits = HC->entries();
+    for(int j=0; j<NbHits; j++){
+      TrackHit* hit = (*HC)[j];
+      /*if(hit->GetParName() == "gamma" && hit->GetProcName() != "Transportation"){
+	G4cout <<hit->GetParentID()<< " " <<hit->GetTrackID()<< " " <<hit->GetParName()<< " " <<hit->GetDetName()<< " " <<hit->GetProcName()<< " " << G4endl; 
+	G4cout << "Time  : " <<hit->GetLocTime()<< G4endl;
+	G4cout << "Previous // Current" << G4endl;
+	G4cout << "Positions  : " <<hit->GetParPrePos()<< " // " <<hit->GetParPos()<< G4endl;
+	G4cout << "Momentum   : " <<hit->GetParPreMom()<< " // " <<hit->GetParMom()<< G4endl;	
+	G4cout << "Kinetic    : " <<hit->GetParPreKin()<< " // " <<hit->GetParKin()<< G4endl;
+	}*/
+    }
+  }
+}
+
+/*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
+
+void Run::Timing(){
+  G4int dperc;
   G4double fperc;
   G4long totEventNum;
-  TrackHitCollection* HC;  
-  time_t elpsT,leftT,startT,lastT;
-  char buffer [100];
-
+  time_t leftT,startT,lastT;
+  char buffer[100];
+  
   numberOfEvent++; 
 
   totEventNum = (G4long)GetNumberOfEventToBeProcessed();
   fperc = numberOfEvent * 100.0 / totEventNum;
-  percent = (G4int)(fperc);
+  dperc = (G4int) fperc;
 
-  if (numberOfEvent <= 1) { startT = time(NULL); lastT = startT; }
-      
-  if ( numberOfEvent == 1 || percent == fperc || time(NULL) - lastT >=1 )  {
-    G4cout << "\rProgress: [";
-      
-    for (int i = 0; i < (percent+1)/2; i++){
-      G4cout << ":";
-    }
-      
-    for (int i = (percent+1)/2; i < 50; i++){
-      G4cout << " ";
-    }
-    G4cout << "]" << percent << "%";
-    
-    elpsT = time(NULL) - startT;
-    leftT = (G4double)elpsT / (G4double)numberOfEvent * (G4double)totEventNum;
-    
-    sprintf(buffer, "  ==> TE: %02d:%02d:%02d / TR: %02d:%02d:%02d   ", (G4int)elpsT/3600, ((G4int)elpsT%3600)/60, (G4int)elpsT%60, (G4int)leftT/3600, ((G4int)leftT%3600)/60, (G4int)leftT%60);
-    G4cout << buffer;
-      
-    lastT = time(NULL);
-  }
+  G4cout << "\r*Progress : [";
+  for(int i=0;i<dperc/4;i++) G4cout << ":";
+  for(int i=0;i<25-dperc/4;i++) G4cout << " ";
+  G4cout << "] " << dperc << "%";
   G4cout.flush();
-  if ( numberOfEvent == totEventNum ) G4cout << G4endl;
-  
-  HCE = aEvent->GetHCofThisEvent();
-  if (!HCE) return;
-  fSDM = G4SDManager::GetSDMpointer();
-  collectionID = fSDM->GetCollectionID("HitCollection");
-  HC = (TrackHitCollection*)(HCE->GetHC(collectionID));  
-  NbHits = HC->entries();
   
 }
-
 /*****************************************************************************/

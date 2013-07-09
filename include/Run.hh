@@ -23,6 +23,8 @@ public :
   Run(const std::vector<G4String> SDName);
   ~Run();
   void RecordEvent(const G4Event*);
+private :
+  void Timing();
 	
 };
 

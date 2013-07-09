@@ -14,6 +14,7 @@
 
 #include "G4VSensitiveDetector.hh"
 #include "TrackHit.hh"
+#include "globals.hh"
 
 /*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
 
@@ -30,7 +31,8 @@ public :
   void EndOfEvent(G4HCofThisEvent*);
   
 private :
-  TrackHitCollection* HitCollection;
+  TrackHitCollection* HitColl_ins;
+  TrackHitCollection* HitColl_out;
 
 };
 
