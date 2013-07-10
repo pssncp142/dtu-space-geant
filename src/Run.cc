@@ -15,10 +15,12 @@
 #include "G4SDManager.hh"
 #include "G4Event.hh"
 #include "G4HCofThisEvent.hh"
+#include "G4ThreeVector.hh"
 #include "globals.hh"
 
 #include <vector>
 #include <ctime>
+#include <fstream>
 
 using namespace std;
 
@@ -40,30 +42,108 @@ Run::~Run()
 
 void Run::RecordEvent(const G4Event* aEvent)
 {
-  G4HCofThisEvent* HCE;
-  TrackHitCollection* HC;  
-  G4int NbHits;
 
   Timing();
 
+  G4HCofThisEvent* HCE;
+  TrackHitCollection* HC[2];  
+  G4int NbHits[5];
+  ofstream ofs;
+  TrackHit* hit;
+
+  G4ThreeVector tmp_vect;
+  double tmp_d;
+  int tmp_i;
+
   HCE = aEvent->GetHCofThisEvent();
   if (!HCE) return;
-  //G4cout<<G4endl;
+  for(int i=0;i<2;i++){
+    HC[i] = (TrackHitCollection*)(HCE->GetHC(i));  
+    NbHits[i] = HC[i]->entries();
+  }
+
+  NbHits[2]=0; NbHits[3]=0;
   for(int i=0; i<2; i++){
-    HC = (TrackHitCollection*)(HCE->GetHC(i));  
-    NbHits = HC->entries();
-    for(int j=0; j<NbHits; j++){
-      TrackHit* hit = (*HC)[j];
-      /*if(hit->GetParName() == "gamma" && hit->GetProcName() != "Transportation"){
-	G4cout <<hit->GetParentID()<< " " <<hit->GetTrackID()<< " " <<hit->GetParName()<< " " <<hit->GetDetName()<< " " <<hit->GetProcName()<< " " << G4endl; 
-	G4cout << "Time  : " <<hit->GetLocTime()<< G4endl;
-	G4cout << "Previous // Current" << G4endl;
-	G4cout << "Positions  : " <<hit->GetParPrePos()<< " // " <<hit->GetParPos()<< G4endl;
-	G4cout << "Momentum   : " <<hit->GetParPreMom()<< " // " <<hit->GetParMom()<< G4endl;	
-	G4cout << "Kinetic    : " <<hit->GetParPreKin()<< " // " <<hit->GetParKin()<< G4endl;
-	}*/
+    for(int j=0; j<NbHits[i]; j++){
+      hit = (*HC[i])[j];
+      if(hit->GetParName() == "gamma" && hit->GetParentID() == 0 && hit->GetProcName() != "Transportation"){
+	NbHits[2+i]++;
+      }
     }
   }
+  NbHits[4] = NbHits[2] + NbHits[3];
+
+  hit = (*HC[0])[0];
+  ofs.open("data.bin",iostream::app);
+  tmp_i = NbHits[4];
+  ofs.write((char*)&tmp_i,sizeof(int));
+  tmp_vect = hit->GetParVertPos();
+  tmp_d = tmp_vect.getX();
+  ofs.write((char*)&tmp_d,sizeof(double));
+  tmp_d = tmp_vect.getY();
+  ofs.write((char*)&tmp_d,sizeof(double));
+  tmp_d = tmp_vect.getZ();
+  ofs.write((char*)&tmp_d,sizeof(double));
+  tmp_vect = hit->GetParVertMomDir();
+  tmp_d = tmp_vect.getX();
+  ofs.write((char*)&tmp_d,sizeof(double));
+  tmp_d = tmp_vect.getY();
+  ofs.write((char*)&tmp_d,sizeof(double));
+  tmp_d = tmp_vect.getZ();
+  ofs.write((char*)&tmp_d,sizeof(double));
+  tmp_d = hit->GetParVertKin()*1000;
+  ofs.write((char*)&tmp_d,sizeof(double));
+
+  for(int i=0; i<2; i++){
+    for(int j=0; j<NbHits[i]; j++){
+      hit = (*HC[i])[j];
+      if(hit->GetParName() == "gamma" && hit->GetParentID() == 0 && hit->GetProcName() != "Transportation"){
+	if(hit->GetProcName() == "compt"){
+	  tmp_i = 0;
+	  ofs.write((char*)&tmp_i,sizeof(int));
+	} else if(hit->GetProcName() == "phot") {
+	  tmp_i = 1;
+	  ofs.write((char*)&tmp_i,sizeof(int));
+	} else if(hit->GetProcName() == "Rayl") {
+	  tmp_i = 2;
+	  ofs.write((char*)&tmp_i,sizeof(int));
+	}
+	if(hit->GetDetName() == "ins"){
+	  tmp_i = 0;
+	  ofs.write((char*)&tmp_i,sizeof(int));
+	} else if(hit->GetDetName() == "out") {
+	  tmp_i = 1;
+	  ofs.write((char*)&tmp_i,sizeof(int));
+	}
+	tmp_vect = hit->GetParPos();
+	tmp_d = tmp_vect.getX();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_d = tmp_vect.getY();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_d = tmp_vect.getZ();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_vect = hit->GetParPreMomDir();
+	tmp_d = tmp_vect.getX();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_d = tmp_vect.getY();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_d = tmp_vect.getZ();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_vect = hit->GetParMomDir();
+	tmp_d = tmp_vect.getX();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_d = tmp_vect.getY();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_d = tmp_vect.getZ();
+	ofs.write((char*)&tmp_d,sizeof(double));
+	tmp_d = (hit->GetParPreKin() - hit->GetParKin())*1000;
+	ofs.write((char*)&tmp_d,sizeof(double));
+      }
+    }
+  }
+
+  ofs.close();
+
 }
 
 /*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/

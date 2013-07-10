@@ -72,12 +72,18 @@ G4bool SensitiveDetector::ProcessHits(G4Step* aStep,G4TouchableHistory* THist)
   thisHit->SetProcName(postStep->GetProcessDefinedStep()->GetProcessName());
   thisHit->SetLocTime(aTrack->GetLocalTime());
   thisHit->SetParPos(aTrack->GetPosition());
+  thisHit->SetParVertPos(aTrack->GetVertexPosition());
   thisHit->SetParPostPos(postStep->GetPosition());
   thisHit->SetParPrePos(preStep->GetPosition());
+  thisHit->SetParMomDir(aTrack->GetMomentumDirection());
+  thisHit->SetParVertMomDir(aTrack->GetVertexMomentumDirection());
+  thisHit->SetParPostMomDir(postStep->GetMomentumDirection());   
+  thisHit->SetParPreMomDir(preStep->GetMomentumDirection());  
   thisHit->SetParMom(aTrack->GetMomentum());
   thisHit->SetParPostMom(postStep->GetMomentum());
   thisHit->SetParPreMom(preStep->GetMomentum());
   thisHit->SetParKin(aTrack->GetKineticEnergy());
+  thisHit->SetParVertKin(aTrack->GetVertexKineticEnergy());
   thisHit->SetParPostKin(postStep->GetKineticEnergy());
   thisHit->SetParPreKin(preStep->GetKineticEnergy());
 

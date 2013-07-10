@@ -43,12 +43,18 @@ public :
   G4String GetProcName(){return procName;};
   G4double GetLocTime(){return locTime;};
   G4ThreeVector GetParPos(){return parPos;};
+  G4ThreeVector GetParVertPos(){return parVertPos;};
   G4ThreeVector GetParPostPos(){return parPostPos;};
   G4ThreeVector GetParPrePos(){return parPrePos;};
+  G4ThreeVector GetParMomDir(){return parMomDir;};
+  G4ThreeVector GetParVertMomDir(){return parVertMomDir;};
+  G4ThreeVector GetParPostMomDir(){return parPostMomDir;};
+  G4ThreeVector GetParPreMomDir(){return parPreMomDir;};
   G4ThreeVector GetParMom(){return parMom;};
   G4ThreeVector GetParPostMom(){return parPostMom;};
   G4ThreeVector GetParPreMom(){return parPreMom;};
   G4double GetParKin(){return parKin;};
+  G4double GetParVertKin(){return parVertKin;};
   G4double GetParPostKin(){return parPostKin;};
   G4double GetParPreKin(){return parPreKin;};
 
@@ -59,12 +65,18 @@ public :
   void SetProcName(G4String val){procName=val;};
   void SetLocTime(G4double val){locTime=val;};
   void SetParPos(G4ThreeVector val){parPos=val;};
+  void SetParVertPos(G4ThreeVector val){parVertPos=val;};
   void SetParPostPos(G4ThreeVector val){parPostPos=val;};
   void SetParPrePos(G4ThreeVector val){parPrePos=val;};
+  void SetParMomDir(G4ThreeVector val){parMomDir=val;};
+  void SetParVertMomDir(G4ThreeVector val){parVertMomDir=val;};
+  void SetParPostMomDir(G4ThreeVector val){parPostMomDir=val;};
+  void SetParPreMomDir(G4ThreeVector val){parPreMomDir=val;};
   void SetParMom(G4ThreeVector val){parMom=val;};
   void SetParPostMom(G4ThreeVector val){parPostMom=val;};
   void SetParPreMom(G4ThreeVector val){parPreMom=val;};
   void SetParKin(G4double val){parKin=val;};
+  void SetParVertKin(G4double val){parVertKin=val;};
   void SetParPostKin(G4double val){parPostKin=val;};
   void SetParPreKin(G4double val){parPreKin=val;};
 
@@ -76,12 +88,18 @@ private :
   G4String procName;
   G4double locTime;
   G4ThreeVector parPos;
+  G4ThreeVector parVertPos;
   G4ThreeVector parPostPos;
   G4ThreeVector parPrePos;
+  G4ThreeVector parMomDir;
+  G4ThreeVector parVertMomDir;
+  G4ThreeVector parPostMomDir;
+  G4ThreeVector parPreMomDir;
   G4ThreeVector parMom;
   G4ThreeVector parPostMom;
   G4ThreeVector parPreMom;
   G4double parKin;
+  G4double parVertKin;
   G4double parPostKin;
   G4double parPreKin;
 
