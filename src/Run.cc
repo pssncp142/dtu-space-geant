@@ -46,8 +46,8 @@ void Run::RecordEvent(const G4Event* aEvent)
   Timing();
 
   G4HCofThisEvent* HCE;
-  TrackHitCollection* HC[2];  
-  G4int NbHits[5];
+  TrackHitCollection* HC[3];  
+  G4int NbHits[7];
   ofstream ofs;
   TrackHit* hit;
 
@@ -57,44 +57,55 @@ void Run::RecordEvent(const G4Event* aEvent)
 
   HCE = aEvent->GetHCofThisEvent();
   if (!HCE) return;
-  for(int i=0;i<2;i++){
+
+  for(int i=0;i<3;i++){
     HC[i] = (TrackHitCollection*)(HCE->GetHC(i));  
     NbHits[i] = HC[i]->entries();
   }
 
-  NbHits[2]=0; NbHits[3]=0;
-  for(int i=0; i<2; i++){
+  NbHits[3]=0; NbHits[4]=0; NbHits[5]=0;
+  for(int i=0; i<3; i++){
     for(int j=0; j<NbHits[i]; j++){
       hit = (*HC[i])[j];
       if(hit->GetParName() == "gamma" && hit->GetParentID() == 0 && hit->GetProcName() != "Transportation"){
-	NbHits[2+i]++;
+	NbHits[3+i]++;
       }
     }
   }
-  NbHits[4] = NbHits[2] + NbHits[3];
+  NbHits[6] = NbHits[3] + NbHits[4] + NbHits[5];
 
-  hit = (*HC[0])[0];
-  ofs.open("data.bin",iostream::app);
-  tmp_i = NbHits[4];
-  ofs.write((char*)&tmp_i,sizeof(int));
-  tmp_vect = hit->GetParVertPos();
-  tmp_d = tmp_vect.getX();
-  ofs.write((char*)&tmp_d,sizeof(double));
-  tmp_d = tmp_vect.getY();
-  ofs.write((char*)&tmp_d,sizeof(double));
-  tmp_d = tmp_vect.getZ();
-  ofs.write((char*)&tmp_d,sizeof(double));
-  tmp_vect = hit->GetParVertMomDir();
-  tmp_d = tmp_vect.getX();
-  ofs.write((char*)&tmp_d,sizeof(double));
-  tmp_d = tmp_vect.getY();
-  ofs.write((char*)&tmp_d,sizeof(double));
-  tmp_d = tmp_vect.getZ();
-  ofs.write((char*)&tmp_d,sizeof(double));
-  tmp_d = hit->GetParVertKin()*1000;
-  ofs.write((char*)&tmp_d,sizeof(double));
+  if(NbHits[3]!=0){
+    hit = (*HC[0])[0]; 
+  } else if(NbHits[4]!=0) {
+    hit = (*HC[1])[0];
+  } else if(NbHits[5]!=0) {
+    hit = (*HC[2])[0];
+  }
 
-  for(int i=0; i<2; i++){
+  if(NbHits[3]!=0 || NbHits[4]!=0 ||  NbHits[5]!=0){
+    ofs.open("data.bin",iostream::app);
+    ofs.write((char*)"A",sizeof(char));
+    tmp_i = NbHits[6];
+    ofs.write((char*)&tmp_i,sizeof(int));
+    tmp_vect = hit->GetParVertPos();
+    tmp_d = tmp_vect.getX();
+    ofs.write((char*)&tmp_d,sizeof(double));
+    tmp_d = tmp_vect.getY();
+    ofs.write((char*)&tmp_d,sizeof(double));
+    tmp_d = tmp_vect.getZ();
+    ofs.write((char*)&tmp_d,sizeof(double));
+    tmp_vect = hit->GetParVertMomDir();
+    tmp_d = tmp_vect.getX();
+    ofs.write((char*)&tmp_d,sizeof(double));
+    tmp_d = tmp_vect.getY();
+    ofs.write((char*)&tmp_d,sizeof(double));
+    tmp_d = tmp_vect.getZ();
+    ofs.write((char*)&tmp_d,sizeof(double));
+    tmp_d = hit->GetParVertKin()*1000;
+    ofs.write((char*)&tmp_d,sizeof(double));
+  }
+
+  for(int i=0; i<3; i++){
     for(int j=0; j<NbHits[i]; j++){
       hit = (*HC[i])[j];
       if(hit->GetParName() == "gamma" && hit->GetParentID() == 0 && hit->GetProcName() != "Transportation"){
@@ -114,7 +125,12 @@ void Run::RecordEvent(const G4Event* aEvent)
 	} else if(hit->GetDetName() == "out") {
 	  tmp_i = 1;
 	  ofs.write((char*)&tmp_i,sizeof(int));
+	} else if(hit->GetDetName() == "bot") {
+	  tmp_i = 2;
+	  ofs.write((char*)&tmp_i,sizeof(int));
 	}
+	tmp_d = hit->GetLocTime();
+	ofs.write((char*)&tmp_d,sizeof(double));
 	tmp_vect = hit->GetParPos();
 	tmp_d = tmp_vect.getX();
 	ofs.write((char*)&tmp_d,sizeof(double));

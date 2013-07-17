@@ -36,14 +36,15 @@ int main(int argc,char** argv) {
   
   G4RunManager * runManager = new G4RunManager;
 
-  DetectorConstruction* detCon = new DetectorConstruction();
-  runManager->SetUserInitialization(detCon);
-
   PhysicsList* physList = new PhysicsList();
   runManager->SetUserInitialization(physList);  
 
   PrimaryGeneratorAction* prim  = new PrimaryGeneratorAction();        
   runManager->SetUserAction(prim);
+
+  DetectorConstruction* detCon = new DetectorConstruction();
+  runManager->SetUserInitialization(detCon);
+
 
   RunAction* runAct = new RunAction();
   runManager->SetUserAction(runAct);

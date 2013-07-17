@@ -105,11 +105,11 @@ void DetectorConstruction::BuildDetector(){
   det_out_log->SetVisAttributes(G4Color::Blue());
 
   //det_bot_width is somewhere above
-  G4double det_bot_radius = det_out_inner_radius;
+  G4double det_bot_radius = det_out_inner_radius-0.001*mm;
   G4ThreeVector det_bot_pos = G4ThreeVector(0,0,-det_out_width*2+det_bot_width);
   
   G4VSolid* det_bot_sol = new G4Tubs("det_bot_sol",0,det_bot_radius,det_bot_width,0,2*pi*radian);
-  G4LogicalVolume* det_bot_log = new G4LogicalVolume(det_bot_sol,CdZnTe,"det_bot_log");
+  G4LogicalVolume* det_bot_log = new G4LogicalVolume(det_bot_sol,CdZnTe,"det_out_log");
   G4VPhysicalVolume* det_bot_phys = new G4PVPlacement(0,det_bot_pos,det_bot_log,"det_bot_phys",World_log,0,0,false);
   det_bot_log->SetVisAttributes(G4Color::Magenta());
 

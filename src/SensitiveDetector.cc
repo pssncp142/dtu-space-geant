@@ -30,6 +30,8 @@ SensitiveDetector::SensitiveDetector(G4String sname) : G4VSensitiveDetector(snam
     collectionName.insert(HCname="HitColl_ins");
   } else if (sname == "/det/out"){
     collectionName.insert(HCname="HitColl_out");
+  } else if (sname == "/det/bot"){
+    collectionName.insert(HCname="HitColl_bot");
   }
 }
 
@@ -53,6 +55,10 @@ void SensitiveDetector::Initialize(G4HCofThisEvent* hitsColl)
     HitColl_out = new TrackHitCollection(SensitiveDetectorName,collectionName[0]);
     HCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
     hitsColl->AddHitsCollection(HCID,HitColl_out); 
+  } else if(SensitiveDetectorName == "bot"){
+    HitColl_bot = new TrackHitCollection(SensitiveDetectorName,collectionName[0]);
+    HCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);
+    hitsColl->AddHitsCollection(HCID,HitColl_bot); 
   }
 }
 
@@ -64,7 +70,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step* aStep,G4TouchableHistory* THist)
   G4StepPoint* preStep = aStep->GetPreStepPoint();
   G4StepPoint* postStep = aStep->GetPostStepPoint();  
   TrackHit* thisHit = new TrackHit();
-  
+
   thisHit->SetParentID(aTrack->GetParentID());
   thisHit->SetTrackID(aTrack->GetTrackID());
   thisHit->SetParName(aTrack->GetDefinition()->GetParticleName());
@@ -87,10 +93,15 @@ G4bool SensitiveDetector::ProcessHits(G4Step* aStep,G4TouchableHistory* THist)
   thisHit->SetParPostKin(postStep->GetKineticEnergy());
   thisHit->SetParPreKin(preStep->GetKineticEnergy());
 
+
   if(SensitiveDetectorName == "ins")
     HitColl_ins->insert(thisHit);
   else if(SensitiveDetectorName == "out")
     HitColl_out->insert(thisHit);
+  else if(SensitiveDetectorName == "bot")
+    HitColl_bot->insert(thisHit);
+
+
   return 0;
 }
 

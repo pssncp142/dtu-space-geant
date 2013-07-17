@@ -27,6 +27,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   ~DetectorConstruction();
   
   G4VPhysicalVolume* Construct();                 
+
+  static G4ThreeVector origin;
   
   private:
   
@@ -35,7 +37,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
   G4double worldSize;    
 
-  G4Material* Air; 
+  G4Material* Air;
+  G4Material* Si;
   G4Material* CdZnTe;
   
   G4VSolid* World_sol;  

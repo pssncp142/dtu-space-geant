@@ -33,6 +33,7 @@ public :
 private :
   TrackHitCollection* HitColl_ins;
   TrackHitCollection* HitColl_out;
+  TrackHitCollection* HitColl_bot;
 
 };
 

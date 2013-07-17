@@ -102,9 +102,9 @@ void PhysicsList::GeneralPhysics()
       theGammaConversion->SetModel(new G4LivermoreGammaConversionModel());
       pmanager->AddDiscreteProcess(theGammaConversion);
       
-      G4RayleighScattering* theRayleigh = new G4RayleighScattering();
-      theRayleigh->SetModel(new G4XrayRayleighModel());
-      pmanager->AddDiscreteProcess(theRayleigh);
+      //G4RayleighScattering* theRayleigh = new G4RayleighScattering();
+      //theRayleigh->SetModel(new G4XrayRayleighModel());
+      //pmanager->AddDiscreteProcess(theRayleigh);
     }
     if (particleName == "e-"){
       G4eMultipleScattering* msc = new G4eMultipleScattering();
