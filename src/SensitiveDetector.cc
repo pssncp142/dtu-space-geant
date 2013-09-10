@@ -75,6 +75,10 @@ G4bool SensitiveDetector::ProcessHits(G4Step* aStep,G4TouchableHistory* THist)
   thisHit->SetTrackID(aTrack->GetTrackID());
   thisHit->SetParName(aTrack->GetDefinition()->GetParticleName());
   thisHit->SetDetName(preStep->GetSensitiveDetector()->GetName());
+  if(aTrack->GetParentID() != 0)
+    thisHit->SetCreProcName(aTrack->GetCreatorProcess()->GetProcessName());
+  else
+    thisHit->SetCreProcName("vert");
   thisHit->SetProcName(postStep->GetProcessDefinedStep()->GetProcessName());
   thisHit->SetLocTime(aTrack->GetLocalTime());
   thisHit->SetParPos(aTrack->GetPosition());
@@ -92,8 +96,9 @@ G4bool SensitiveDetector::ProcessHits(G4Step* aStep,G4TouchableHistory* THist)
   thisHit->SetParVertKin(aTrack->GetVertexKineticEnergy());
   thisHit->SetParPostKin(postStep->GetKineticEnergy());
   thisHit->SetParPreKin(preStep->GetKineticEnergy());
-
-
+  thisHit->SetParPol(aTrack->GetPolarization());
+  thisHit->SetEnDep(aStep->GetTotalEnergyDeposit());
+  
   if(SensitiveDetectorName == "ins")
     HitColl_ins->insert(thisHit);
   else if(SensitiveDetectorName == "out")

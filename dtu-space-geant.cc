@@ -23,6 +23,8 @@
 #include "PhysicsList.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
+#include "G4VPhysicsConstructor.hh"
 
 #include "Randomize.hh"
 

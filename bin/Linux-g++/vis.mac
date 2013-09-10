@@ -1,9 +1,35 @@
-/vis/open OGL
-/vis/drawVolume
-/vis/drawView 90
-/vis/viewer/set/style s
-/vis/scene/add/trajectories
-/vis/scene/add/hits
+#/vis/open OGL
+#/vis/drawVolume
+#/vis/drawView 90
+#/vis/viewer/set/style s
+#/vis/scene/add/trajectories
+#/vis/scene/add/hits
 
-/gps/particle gamma
-/run/beamOn 2
+#/run/initialize
+
+#/process/em/fluo true
+#/process/em/auger true
+#/process/em/pixe true
+
+#/gps/source/clear
+
+#/gps/source/add 1
+#/gps/ene/type Lin
+#/gps/ene/min 200 keV
+#/gps/ene/max 1000 keV
+#/gps/ene/gradient 0
+#/gps/ene/intercept 2
+#/gps/particle gamma
+#/run/beamOn 1000000
+
+#/gps/particle gamma
+#/gps/energy 200 keV
+#/run/beamOn 100000
+
+#/gps/particle gamma
+#/gps/energy 511 keV
+#/run/beamOn 100000
+
+#/gps/particle gamma
+#/gps/energy 1000 keV
+#/run/beamOn 100000

@@ -38,7 +38,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   G4double worldSize;    
 
   G4Material* Air;
+  G4Material* Gal;
   G4Material* Si;
+  G4Material* Ge;
   G4Material* CdZnTe;
   
   G4VSolid* World_sol;  

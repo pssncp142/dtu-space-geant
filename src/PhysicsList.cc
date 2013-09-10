@@ -15,14 +15,20 @@
 #include "G4IonConstructor.hh"
 #include "G4ProcessManager.hh"
 #include "G4RadioactiveDecay.hh"
+#include "G4EmProcessOptions.hh"
 
 #include "G4KleinNishinaModel.hh"
+#include "G4KleinNishinaCompton.hh"
+
 #include "G4PEEffectFluoModel.hh"
 #include "G4XrayRayleighModel.hh"
 #include "G4LivermoreGammaConversionModel.hh"
 #include "G4LivermoreIonisationModel.hh"
 #include "G4LivermoreBremsstrahlungModel.hh"
+#include "G4LivermorePhotoElectricModel.hh"
 
+#include "G4LivermoreComptonModel.hh"
+#include "G4LivermorePolarizedComptonModel.hh"
 #include "G4ComptonScattering.hh"
 #include "G4GammaConversion.hh"
 #include "G4PhotoElectricEffect.hh"
@@ -73,9 +79,15 @@ void PhysicsList::ConstructParticle()
 void PhysicsList::ConstructProcess()
 {
   AddTransportation();
-  RadioactiveDecay();
-  GeneralPhysics();
   AtomicDeexcitation();
+  GeneralPhysics();
+  RadioactiveDecay();
+
+  G4EmProcessOptions opt;
+  opt.SetMinEnergy(100*eV);
+  opt.SetMaxEnergy(10*TeV);
+  opt.SetDEDXBinning(220);
+  opt.SetLambdaBinning(220);
 }
 
 /*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
@@ -91,33 +103,33 @@ void PhysicsList::GeneralPhysics()
     
     if (particleName == "gamma"){	
       G4PhotoElectricEffect* thePhotoElectricEffect = new G4PhotoElectricEffect();
-      thePhotoElectricEffect->SetModel(new G4PEEffectFluoModel());      	
+      thePhotoElectricEffect->SetModel(new G4LivermorePhotoElectricModel());      	
       pmanager->AddDiscreteProcess(thePhotoElectricEffect);
       
       G4ComptonScattering* theComptonScattering = new G4ComptonScattering();	
-      theComptonScattering->SetModel(new G4KleinNishinaModel());
+      theComptonScattering->SetModel(new G4LivermorePolarizedComptonModel());
       pmanager->AddDiscreteProcess(theComptonScattering);
       
-      G4GammaConversion* theGammaConversion = new G4GammaConversion();
-      theGammaConversion->SetModel(new G4LivermoreGammaConversionModel());
-      pmanager->AddDiscreteProcess(theGammaConversion);
+      //G4GammaConversion* theGammaConversion = new G4GammaConversion();
+      //theGammaConversion->SetModel(new G4LivermoreGammaConversionModel());
+      //pmanager->AddDiscreteProcess(theGammaConversion);
       
       //G4RayleighScattering* theRayleigh = new G4RayleighScattering();
       //theRayleigh->SetModel(new G4XrayRayleighModel());
       //pmanager->AddDiscreteProcess(theRayleigh);
     }
     if (particleName == "e-"){
-      G4eMultipleScattering* msc = new G4eMultipleScattering();
-      msc->SetStepLimitType(fUseDistanceToBoundary);
-      pmanager->AddProcess(msc,-1,1,1);
-      
       G4eIonisation* eIoni = new G4eIonisation();
       eIoni->SetEmModel(new G4LivermoreIonisationModel());
       pmanager->AddProcess(eIoni,-1,2,2);
-      
+
+      /*G4eMultipleScattering* msc = new G4eMultipleScattering();
+      msc->SetStepLimitType(fUseDistanceToBoundary);
+      pmanager->AddProcess(msc,-1,1,1);
+
       G4eBremsstrahlung* eBrem = new G4eBremsstrahlung();
       eBrem->SetEmModel(new G4LivermoreBremsstrahlungModel());
-      pmanager->AddProcess(eBrem,-1,3,3);
+      pmanager->AddProcess(eBrem,-1,3,3);*/
     }
     if (particleName == "e+"){
       pmanager->AddProcess(new G4eMultipleScattering, -1, 1, 1);
@@ -141,8 +153,13 @@ void PhysicsList::GeneralPhysics()
 
 void PhysicsList::AtomicDeexcitation()
 {
-  G4UAtomicDeexcitation* di = new G4UAtomicDeexcitation;
+  G4UAtomicDeexcitation* di = new G4UAtomicDeexcitation();
   G4LossTableManager::Instance()->SetAtomDeexcitation(di);
+  //G4EmProcessOptions em;
+  di->SetFluo(true);
+  di->SetAuger(true);
+  di->SetPIXE(true);
+  //em.SetPIXECrossSectionModel("ECPSSR_Analytical");
 }
 
 /*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
@@ -161,10 +178,10 @@ void PhysicsList::RadioactiveDecay()
 
 void PhysicsList::SetCuts()
 {
-  SetCutsWithDefault();
-  //SetCutValue(0.001*mm, "gamma");
-  //SetCutValue(0.001*mm, "e-");
-  //SetCutValue(0.001*mm, "e+");
+  //SetCutsWithDefault();
+  SetCutValue(0.1*mm, "gamma");
+  SetCutValue(2.0*mm, "e-");
+  SetCutValue(0.1*mm, "e+");
 }
 
 /*****************************************************************************/

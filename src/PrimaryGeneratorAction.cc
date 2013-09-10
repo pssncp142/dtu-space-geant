@@ -31,7 +31,26 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   posDist = particleSource->GetCurrentSource()->GetPosDist();
   angDist = particleSource->GetCurrentSource()->GetAngDist();
   eneDist = particleSource->GetCurrentSource()->GetEneDist();
-  posDist->SetCentreCoords(DetectorConstruction::origin);
+
+  G4double Height = 50*m;
+  G4double Theta = 0*degree;
+  G4double Phi = -45*degree;
+  G4ThreeVector sourcePos = 
+    G4ThreeVector(tan(Theta)*cos(Phi)*Height,
+		  tan(Theta)*sin(Phi)*Height,
+		  Height);
+  posDist->SetCentreCoords(sourcePos);
+  posDist->SetPosDisType("Plane");
+  posDist->SetPosDisShape("Circle");
+  posDist->SetRadius(3*cm);
+  angDist->SetParticleMomentumDirection(-sourcePos);
+  //particleSource->GetCurrentSource()->SetParticlePolarization(G4ThreeVector(1,-1,0));
+  //eneDist->SetEnergyDisType("Pow");
+  //eneDist->SetEmin(200*keV);
+  //eneDist->SetEmax(1*MeV);
+  //eneDist->SetAlpha(-2);
+
+  /*posDist->SetCentreCoords(DetectorConstruction::origin);
   posDist->SetPosDisType("Surface");
   posDist->SetPosDisShape("Sphere");
   posDist->SetRadius(10*cm);
@@ -39,6 +58,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   eneDist->SetEnergyDisType("Gauss");
   eneDist->SetMonoEnergy(600*keV);
   eneDist->SetBeamSigmaInE(250*keV);
+  */
+  
 }   
 
 /*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/

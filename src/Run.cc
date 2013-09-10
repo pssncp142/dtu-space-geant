@@ -40,16 +40,88 @@ Run::~Run()
 
 /*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
 
+/*void Run::RecordEvent(const G4Event* aEvent){
+
+  Timing();
+  
+  G4HCofThisEvent* HCE;
+  TrackHitCollection* HC[3];  
+  G4int NbHits[2];
+  G4int ENbHits[2]={0};
+  ofstream txt,bin;
+  TrackHit* hit;
+  double dtmp;
+  int tot_ev;
+  G4ThreeVector vtmp;
+  
+  HCE = aEvent->GetHCofThisEvent();
+  if (!HCE) return;
+
+  txt.open("data.txt",iostream::app);
+  for(int i=0;i<2;i++){
+    HC[i] = (TrackHitCollection*)(HCE->GetHC(i));  
+    NbHits[i] = HC[i]->entries();
+    for(int j=0;j<NbHits[i];j++){
+      hit = (*HC[i])[j]; 
+      if(hit->GetProcName() != "Transportation"){
+	txt << hit->GetParentID() << " "
+	    << hit->GetTrackID() << " "
+	    << hit->GetParName() << " "
+	    << hit->GetCreProcName() << " "
+	    << hit->GetProcName() << " "
+	    << hit->GetLocTime()*1e5 << " "
+	    << hit->GetDetName() << " "
+	    << hit->GetParPos() << " "
+	    << hit->GetEnDep()*1e3 << " "
+	    << G4endl;
+	ENbHits[i]++;
+      }
+    }
+  }
+  cout << ENbHits[0] << " " << ENbHits[1] << endl;
+  if(NbHits[0]+NbHits[1] != 0)
+    txt << G4endl;
+  txt.close();
+
+  for(int i=0; i<2; i++){
+    tot_ev = ENbHits[0]+ENbHits[1];
+    if(tot_ev!=0){
+      bin.open("data.bin",iostream::app);
+      if(i==0)
+	bin.write((char*)&tot_ev,sizeof(int));
+      for(int j=0; j<NbHits[i]; j++){
+	hit = (*HC[i])[j]; 
+	if(hit->GetProcName() != "Transportation"){
+	  vtmp = hit->GetParPos();
+	  dtmp = vtmp.getX();
+	  bin.write((char*)&dtmp,sizeof(double));
+	  dtmp = vtmp.getY();
+	  bin.write((char*)&dtmp,sizeof(double));
+	  dtmp = vtmp.getZ();
+	  bin.write((char*)&dtmp,sizeof(double));
+	  dtmp = hit->GetEnDep()*1e3;
+	  bin.write((char*)&dtmp,sizeof(double));
+	}
+      }
+      bin.close();
+    }
+  }
+
+  }*/
+
+/*ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo*/
+
 void Run::RecordEvent(const G4Event* aEvent)
 {
 
   Timing();
 
   G4HCofThisEvent* HCE;
-  TrackHitCollection* HC[3];  
-  G4int NbHits[7];
-  ofstream ofs;
+  TrackHitCollection* HC[2];  
+  G4int NbHits[4];
+  ofstream ofs,ofs1;
   TrackHit* hit;
+  char a = 'a';
 
   G4ThreeVector tmp_vect;
   double tmp_d;
@@ -58,34 +130,34 @@ void Run::RecordEvent(const G4Event* aEvent)
   HCE = aEvent->GetHCofThisEvent();
   if (!HCE) return;
 
-  for(int i=0;i<3;i++){
+  for(int i=0;i<2;i++){
     HC[i] = (TrackHitCollection*)(HCE->GetHC(i));  
     NbHits[i] = HC[i]->entries();
   }
 
-  NbHits[3]=0; NbHits[4]=0; NbHits[5]=0;
-  for(int i=0; i<3; i++){
+  NbHits[2]=0; NbHits[3]=0;
+  for(int i=0; i<2; i++){
     for(int j=0; j<NbHits[i]; j++){
       hit = (*HC[i])[j];
       if(hit->GetParName() == "gamma" && hit->GetParentID() == 0 && hit->GetProcName() != "Transportation"){
-	NbHits[3+i]++;
+	NbHits[2+i]++;
       }
     }
   }
-  NbHits[6] = NbHits[3] + NbHits[4] + NbHits[5];
+  NbHits[4] = NbHits[2] + NbHits[3];
 
-  if(NbHits[3]!=0){
+  if(NbHits[2]>0){
     hit = (*HC[0])[0]; 
-  } else if(NbHits[4]!=0) {
+  } else if(NbHits[3]>0) {
     hit = (*HC[1])[0];
-  } else if(NbHits[5]!=0) {
-    hit = (*HC[2])[0];
   }
 
-  if(NbHits[3]!=0 || NbHits[4]!=0 ||  NbHits[5]!=0){
-    ofs.open("data.bin",iostream::app);
-    ofs.write((char*)"A",sizeof(char));
-    tmp_i = NbHits[6];
+  ofs.open("data.bin",iostream::app);
+  ofs1.open("a.txt",iostream::app);
+
+  if(NbHits[2]>0 || NbHits[3]>0){
+    ofs.write((char*)&a,sizeof(char));
+    tmp_i = NbHits[4];
     ofs.write((char*)&tmp_i,sizeof(int));
     tmp_vect = hit->GetParVertPos();
     tmp_d = tmp_vect.getX();
@@ -105,9 +177,22 @@ void Run::RecordEvent(const G4Event* aEvent)
     ofs.write((char*)&tmp_d,sizeof(double));
   }
 
-  for(int i=0; i<3; i++){
+  for(int i=0; i<2; i++){
     for(int j=0; j<NbHits[i]; j++){
       hit = (*HC[i])[j];
+
+      /*if((hit->GetParVertKin() == hit->GetParPreKin()) && hit->GetParentID() == 0
+	   && hit->GetDetName() == "ins" && hit->GetProcName() == "compt" && hit->GetProcName() != "Transportation" ){
+	G4ThreeVector mom1,mom2;
+	G4double ang,en1,en2;
+	mom1 = hit->GetParPostMomDir();
+	mom2 = hit->GetParPreMomDir();
+	en1 = hit->GetParPostKin();
+	en2 = hit->GetParPreKin();
+	ang = acos(mom1.dot(mom2)/(mom1.mag()*mom2.mag()));
+	ofs1 << ang << " " 
+	     << hit->GetParPreKin()*1000 << " " << 1/(1/(hit->GetParKin()*1000)+1/511.*(cos(ang)-1)) << " " << hit->GetParKin()*1000 << G4endl;
+	     }*/
       if(hit->GetParName() == "gamma" && hit->GetParentID() == 0 && hit->GetProcName() != "Transportation"){
 	if(hit->GetProcName() == "compt"){
 	  tmp_i = 0;
@@ -118,7 +203,7 @@ void Run::RecordEvent(const G4Event* aEvent)
 	} else if(hit->GetProcName() == "Rayl") {
 	  tmp_i = 2;
 	  ofs.write((char*)&tmp_i,sizeof(int));
-	}
+	} 
 	if(hit->GetDetName() == "ins"){
 	  tmp_i = 0;
 	  ofs.write((char*)&tmp_i,sizeof(int));
@@ -159,6 +244,7 @@ void Run::RecordEvent(const G4Event* aEvent)
   }
 
   ofs.close();
+  ofs1.close();
 
 }
 
