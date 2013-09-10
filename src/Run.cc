@@ -118,7 +118,7 @@ void Run::RecordEvent(const G4Event* aEvent)
 
   G4HCofThisEvent* HCE;
   TrackHitCollection* HC[2];  
-  G4int NbHits[4];
+  G4int NbHits[5];
   ofstream ofs,ofs1;
   TrackHit* hit;
   char a = 'a';
